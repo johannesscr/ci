@@ -40,6 +40,13 @@ jobs:
     - name: Build
       run: go build -v ./...
 
+    - name: Upload Artifact
+      # Uploads a file or directory as a build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ci # name of the artifact
+        path: ./ci # path of the artifact
+
   deploy:
     needs: [build, test] # this job will run after the build job is completed
     runs-on: ubuntu-latest
