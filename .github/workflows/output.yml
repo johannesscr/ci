@@ -1,5 +1,10 @@
 name: Output information
 on: workflow_dispatch
+env:
+  DB_HOST: this-is-hardcoded
+  DB_USER: ${{ github.actor }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }} # this is set in repo
+  DB_NO_SECRET: ${{ secrets.DB_MISSING }} # this is not set in repo
 
 jobs:
   info:
@@ -7,3 +12,25 @@ jobs:
     steps:
       - name: Output Github context
         run: echo "${{ toJSON(github) }}"
+  job-1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job level env
+        env:
+          DB_HOST: this-is-overridden
+        run: |
+          echo $DB_HOST
+          echo ${{ env.DB_HOST }}
+          echo $DB_USER
+          echo $DB_PASSWORD
+          echo $DB_NO_SECRET
+  job-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job level env
+        run: |
+          echo $DB_HOST
+          echo ${{ env.DB_HOST }}
+          echo $DB_USER
+          echo $DB_PASSWORD
+          echo $DB_NO_SECRET
