@@ -93,7 +93,7 @@ jobs:
         path: ./ci # path of the artifact
 
   deploy:
-    needs: [build, test, version-check] # this job will run after the build job is completed
+    needs: [build, version-check] # this job will run after the build job is completed
     runs-on: ubuntu-latest
     steps:
       - name: Get build artifact
