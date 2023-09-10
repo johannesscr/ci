@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Publish the version from Readme
         id: publish-version
-        run: grep 'Version:' README.md | cut -d ' ' -f 2 | xargs -I{} echo "version={}" >> $GITHUB_OUTPUT ';'
+        run: grep 'Version:' README.md | cut -d ' ' -f 2 | xargs -I{} echo "version={}" >> $GITHUB_OUTPUT
         # grep 'Version:' README.md searches for lines containing "Version:" in
         # the README.md file.
         # cut -d ' ' -f 2 splits the matched line by spaces (-d ' ') and selects
