@@ -12,6 +12,25 @@ on:
     branches: [ "main" ]
 
 jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.publish-version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Publish the version from Readme
+        id: publish-version
+        run: grep 'Version:' README.md | cut -d ' ' -f 2 | xargs -I{} echo "version={}" >> $GITHUB_OUTPUT ';'
+        # grep 'Version:' README.md searches for lines containing "Version:" in
+        # the README.md file.
+        # cut -d ' ' -f 2 splits the matched line by spaces (-d ' ') and selects
+        # the second field (-f 2), which is the SemVer version.
+        # xargs -I{} is used to pass the extracted version as a placeholder {}
+        # in the echo command.
+        # echo "version={}" formats the result as 'version=x.x.x' by inserting
+        # the extracted version in place of {}.
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +67,7 @@ jobs:
         path: ./ci # path of the artifact
 
   deploy:
-    needs: [build, test] # this job will run after the build job is completed
+    needs: [build, test, version-check] # this job will run after the build job is completed
     runs-on: ubuntu-latest
     steps:
       - name: Get build artifact
@@ -57,5 +76,7 @@ jobs:
           name: ci # name of the artifact
       - name: Output files in current folder
         run: ls
+      - name: Output the version
+        run: echo "Version ${{ needs.version-check.outputs.version }}"
       - name: Deploy
         run: echo "Deploying... (mimicking a deployment)"
